@@ -861,8 +861,38 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeRangeFilter,
   };
 
+  // Announcement banner setup
+  const announcementBanner = document.getElementById("announcement-banner");
+  const announcementTitle = document.getElementById("announcement-title");
+  const announcementMessage = document.getElementById("announcement-message");
+  const closeAnnouncementBtn = document.getElementById("close-announcement");
+
+  // Fetch and display announcements
+  async function fetchAnnouncements() {
+    try {
+      const response = await fetch("/announcements?active_only=true");
+      if (response.ok) {
+        const announcements = await response.json();
+        if (announcements.length > 0) {
+          // Display the first active announcement
+          const announcement = announcements[0];
+          announcementTitle.textContent = announcement.title;
+          announcementMessage.textContent = announcement.message;
+          announcementBanner.classList.remove("hidden");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch announcements:", error);
+    }
+  }
+
+  // Close announcement banner
+  closeAnnouncementBtn.addEventListener("click", () => {
+    announcementBanner.classList.add("hidden");
+  });
+
   // Initialize app
   checkAuthentication();
   initializeFilters();
   fetchActivities();
-});
+  fetchAnnouncements();
